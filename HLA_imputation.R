@@ -12,12 +12,43 @@ library(ggplot2)
 library(gridExtra)
 library(rlist)
 library(plotly)
+library(optparse)
 
 ########## IMPORT ##########
-setwd("~/Documents/GWAS_pipeline")
+setwd("~/Documents/HLA_imputation")
 
 # Import settings
 settings <- jsonlite::fromJSON('settings.json')
+
+# Create command
+`%notin%`<- Negate(`%in%`)
+
+########### READ ARUGMENTS ############
+ 
+# List of argumetns
+option_list = list(
+  make_option(c("-f", "--file"), type="character", default=NULL, 
+              help="dataset filename", metavar="character"),
+  make_option(c("-l", "--locus"), type="character", default=NULL, 
+              help="Locus to be imputed", metavar="character"),
+  make_option(c("-m", "--model"), type = "character", default=NULL,
+              help = "Trained HIBAG model used for imputation", metavar = "character")
+); 
+ 
+opt_parser = OptionParser(option_list=option_list);
+opt = parse_args(opt_parser);
+
+# Check that arguments are passes
+if (is.null(opt$file) | is.null(opt$locus) | is.null(opt$model)){
+  print_help(opt_parser)
+  stop("All arguments must be supplied", call.=FALSE)
+}
+
+# Check that passes locus are acceptable
+if (opt$locus %notin% c("A","B","C","DPB1","DQA1","DRB1","DRB3", "DRB4", "DRB5")){
+  stop("Loci provided must be any of the following options: \r
+  A, B, C, DPB1, DQA1, DQB1, DRB1, DRB3, DRB4 or DRB5", call.=FALSE)
+}
 
 ########## HLA IMPUTATION ############
 

@@ -21,13 +21,34 @@ The pipeline utilizes HLA Genotype Imputation with Attribute Bagging [(HIBAG)](h
 
 This pipeline uses a *settings*-based logic, whereby all paths to files are stored in `settings.json`. The following fields must be filled-up to run the HLA imputation:
 - *models*:
-  - *def*: Default HIBAG model (models can be downloaded from the [HIBAG pre-set models] ())
-  - *DRB3*: Default HIBAG models do not containg the DRB3 locus, therefore a separate model must be provided (please contact [Aditya] (https://github.com/adiamb))
-  - *DRB4* Same as DRB3
-  - *DRB5* Same as DRB3
-- *pkinkFile*: **list** of full paths to the PLINK binary files that are to be imputed (without the extension, see example in `settings.json`)
-- *locus*: **list** of loci (accepts A, B, C, DPB1, DQA1, DQB1, DRB1, DRB3, DRB4, and DRB5)
+  - *def*: Full path to the Default HIBAG model (models can be downloaded from the [HIBAG pre-set models] ()).
+  - *DRB3*: Full path to the Default HIBAG models do not containg the DRB3 locus, therefore a separate model must be provided (please contact [Aditya](https://github.com/adiamb)).
+  - *DRB4* Same as DRB3.
+  - *DRB5* Same as DRB3.
+- *pkinkFile*: **list** of full paths to the PLINK binary files that are to be imputed (without the extension, see example in `settings.json`).
+- *locus*: **list** of loci - accepts A, B, C, DPB1, DQA1, DQB1, DRB1, DRB3, DRB4, and DRB5.
 - *output*: Full path to the directory where HLA imputated files will be stored. 
 
-It is recommended to 
+Subsequently, run `bash SLURM_HLA_IMPUTATION.sh`
+
+*Note*: PLINK binary files *must* be cleaned up and QCed before being inputed to the pipeline given that HIBAG does not allow duplicated or multiallelic variants. 
+
+
+### Impute by ethnicity
+
+This pipeline allows to impute by ethnicity, whereby each ethnicity can be imputed using different, ethnic-specific, models. In addition to the fields previously stated, the following fiels in `settings.json` must be filled-up:
+- *models*
+  -  *EURmodel*: HIBAG model for imputation of Europeans (EUR) and Americans (AMR).
+  -  *ASImodel*: HIBAG model for imputation of South Asian (SAS) and East Asian (EAS).
+  -  *AFRmodel*: HIBAG model for imputation of African (AFR).
+- *ethnicity*: Full path to the a `.csv` file containing the ethnicity of each subject and composed of three columns (**including headers**):
+  - FID: Family ID
+  - IID: Individual ID
+  - Population: Superpopulation/ethnicity - accepts AFR, EUR, SAS, EAS, and AMR
+
+These superpopulations are based on the categorization of ethnicities followed by [1000 Genomes](https://www.internationalgenome.org/category/population/). For imputation of ethnicites, please see the [ancestry imputation pipeline](https://github.com/vicentepese/ancestry_imputation).
+
+
+
+
 

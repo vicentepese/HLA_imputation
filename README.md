@@ -48,7 +48,17 @@ This pipeline allows to impute by ethnicity, whereby each ethnicity can be imput
 
 These superpopulations are based on the categorization of ethnicities followed by [1000 Genomes](https://www.internationalgenome.org/category/population/). For imputation of ethnicites, please see the [ancestry imputation pipeline](https://github.com/vicentepese/ancestry_imputation).
 
+## Utils 
+Some utils are included in the `utils` directory.
 
+### `bgen2binary.sh` 
+Recommended QC for binary files (includes conversion from `.bgen` to PLINK binary files).
 
+### `merge_by_locus.sh`
+Merges files by locus, and subsequently, each merges again each loci to produce a final file with all subjects and loci. Can be used both when imputing only by locus, and by locus and ethnicity. 
+
+### `SUBMTI_HLA_LOCUS.sh`
+File that submits jobs through SLURM - may be modified to change accounts and other parameters. 
+ 
 
 

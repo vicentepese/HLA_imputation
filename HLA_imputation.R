@@ -1,3 +1,19 @@
+## ---------------------------
+##
+## Script name: HLA_imputation.R
+##
+## Purpose of script: Provided a file, a locus (and optional; an ethnicity)
+##  performs HLA imputation using HIBAG.  
+##
+## Author: Vicente Peris Sempere, MSc BME
+##
+## Year Created: 2021
+##
+## Copyright (c) Vicente Peris Sempere, 2021
+## Email: vipese@stanford.edu
+##
+## ---------------------------
+
 # Import libraries
 library(jsonlite)
 library(tidyverse)

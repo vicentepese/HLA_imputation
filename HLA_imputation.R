@@ -1,7 +1,6 @@
 # Import libraries
 library(jsonlite)
 library(tidyverse)
-library(readr)
 library(data.table)
 library(ggrepel)
 library(viridis)
@@ -13,9 +12,10 @@ library(gridExtra)
 library(rlist)
 library(plotly)
 library(optparse)
+library(parallel)
 
 ########## IMPORT ##########
-setwd("~/Documents/HLA_imputation")
+setwd("~/HLA_imputation")
 
 # Import settings
 settings <- jsonlite::fromJSON('settings.json')
@@ -31,46 +31,109 @@ option_list = list(
               help="dataset filename", metavar="character"),
   make_option(c("-l", "--locus"), type="character", default=NULL, 
               help="Locus to be imputed", metavar="character"),
-  make_option(c("-m", "--model"), type = "character", default=NULL,
-              help = "Trained HIBAG model used for imputation", metavar = "character"),
-  make_option(c("-o", "--out"), type = "character", default = "HLA_imputed",
-              help = "Output name", metavar = "character")
+  make_option(c("-o", "--out"), type = "character", default = "HLA_IMP_",
+              help = "Output name", metavar = "character"),
+  make_option(c("-e", "--eth"), type = "character", default=NULL,
+              help = "Ethnicity name", metavar = "character")
 ); 
  
 opt_parser = OptionParser(option_list=option_list);
 opt = parse_args(opt_parser);
 
 # Check that arguments are passes
-if (is.null(opt$file) | is.null(opt$locus) | is.null(opt$model)){
+if (is.null(opt$file)){
   print_help(opt_parser)
-  stop("All arguments must be supplied", call.=FALSE)
+  stop("Please provide a file through --file argument.", call.=FALSE)
 }
 
+
+
 # Check that passes locus are acceptable
-if (opt$locus %notin% c("A","B","C","DPB1","DQA1","DRB1","DRB3", "DRB4", "DRB5")){
+if (opt$locus %notin% c("A","B","C","DPB1","DQA1","DQB1","DRB1","DRB3", "DRB4", "DRB5")){
   stop("Loci provided must be any of the following options: \r
   A, B, C, DPB1, DQA1, DQB1, DRB1, DRB3, DRB4 or DRB5", call.=FALSE)
 }
 
 ########## HLA IMPUTATION ############
 
-# Load pre-fit model and comvert to hlaMODEL
-model.list <- get(load(opt$model))
-model <- model.list[opt$locus]
+# Load pre-fit model and comvert to hlaMODEL based on eth option
+if (is.null(opt$eth)){
+  
+  # Load model
+  model.list <- get(load(settings$models$def))
+  drb3 <- get(load(settings$models$DRB3))
+  drb4 <- get(load(settings$models$DRB4))
+  drb5 <- get(load(settings$models$DRB5))
+  
+  # Merge models 
+  model.list[["DRB3"]] <- drb3
+  model.list[["DRB4"]] <- drb4
+  model.list[["DRB5"]] <- drb5
+  
+   # Import file
+  gname <- opt$file
+  yourgeno <- hlaBED2Geno(bed.fn=paste(gname, ".bed", sep = ''), fam.fn=paste(gname, ".fam", sep='')
+                          , bim.fn=paste(gname, ".bim", sep=''), assembly = 'hg19')
+    
+  # Summary
+  summary(yourgeno)
 
-# Import file
-gname <- opt$file
-yourgeno <- hlaBED2Geno(bed.fn=paste(gname, ".bed", sep = ''), fam.fn=paste(gname, ".fam", sep='')
-                        , bim.fn=paste(gname, ".bim", sep=''), assembly = 'hg19')
-summary(yourgeno)
 
-# Make cluster 
+} else{
+  
+  # Load model based on eth 
+  switch(opt$eth, 
+         "EUR"= {model.list <- get(load(settings$models$EURmodel))},
+         "SAS"= {model.list <- get(load(settings$models$ASImodel))},
+         "EAS"= {model.list <- get(load(settings$models$ASImodel))},
+         "AMR"= {model.list <- get(load(settings$models$EURmodel))},
+         "AFR"= {model.list <- get(load(settings$models$AFRmodel))}
+         )
+  
+  # Load ethnicity data 
+  eth.df <- read.table(file = settings$ethnicity, header = TRUE, sep = ",")
+  eth.df$sample.id <- paste0(eth.df$FID, rep("-", nrow(eth.df)), eth.df$IID)
+  
+  # Import file
+  gname <- opt$file
+  yourgeno <- hlaBED2Geno(bed.fn=paste(gname, ".bed", sep = ''), fam.fn=paste(gname, ".fam", sep='')
+                          , bim.fn=paste(gname, ".bim", sep=''), assembly = 'hg19')
+
+  # Filter by ethnicity
+  eth_ids <- eth.df %>% filter(Population == opt$eth) %>% .['sample.id'] %>% unlist()
+  sample.idx <- which(yourgeno$sample.id %in% eth_ids)
+  yourgeno$sample.id <- yourgeno$sample.id[sample.idx]
+  yourgeno$genotype <- yourgeno$genotype[,sample.idx]
+  
+  # Summary
+  summary(yourgeno)
+  
+}
+
+# Make cluster
 cl <- makeCluster(10)
+
+# Filter model
+model <- model.list[[opt$locus]]
 
 # Make predictions
 model.hla <- hlaModelFromObj(model)
 summary(model.hla)
-pred.guess <- predict(model.hla, yourgeno, type="response+prob", nclassifiers=100, cl=cl, match.type="Position")
+pred.guess <- predict(model.hla, yourgeno, type="response+prob", cl=cl, match.type="Position")
+
+# Import fam 
+fam.file <- read.table(file = paste0(gname, ".fam"), sep = " ", header = FALSE)
+sample.id <- paste(fam.file$V1, fam.file$V2, sep = "-")
+
+# Create sample.id and create FID and IID
+pred.guess$value$sample.id <- sample.id
 pred.guess$value$FID <- pred.guess$value$sample.id %>% lapply(function(x) strsplit(x,"-") %>% unlist() %>% .[1]) %>% unlist()
 pred.guess$value$IID <- pred.guess$value$sample.id %>% lapply(function(x) strsplit(x,"-") %>% unlist() %>% tail(n=1)) %>% unlist()
-save(pred.guess, file = paste0(opt$out, '_' , locus, '.RData'))
+
+# Save
+prefix <- opt$file %>% strsplit("/") %>% unlist() %>% tail(n=1)
+if (is.null(opt$eth)){
+  save(pred.guess, file = paste0(opt$out, prefix,'_HLA_', opt$locus, "_", opt$eth, '.RData'))
+} else{
+    save(pred.guess, file = paste0(opt$out, prefix, "_eth_HLA_", opt$locus, '.RData'))
+}

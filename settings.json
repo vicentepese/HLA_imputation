@@ -1,7 +1,20 @@
 {
 
-    "plinkFile":"",
+    "models":{
+        "EURmodel":"Resources/TRAINED_PSYCH_EUR_HLA_Model_Oct2020.Rdata",
+        "ASImodel":"Resources/TRAINED_PSYCH_EUR_HLA_Model_Oct2020.Rdata",
+        "AFRmodel":"Resources/Axiom_PMRA-African-HLARES-HLA4-hg19.RData",
+        "DRB3":"Resources/PMRA_HLA_DRB3.RData",
+        "DRB4":"Resources/PMRA_HLA_DRB4.RData",
+        "DRB5":"Resources/PMRA_HLA_DRB5.RData",
+        "def":"Resources/PMRA-HLA4-hg19.RData"
+    },
+
+    "plinkFile":["Data_filt/CHR6_concat_EAS_CLEAN_pass1_lifted_over_SORTED", "Data_filt/CHR6_GPC_LGI1", "Data_filt/CHR6_Oxford_LGI1",         "Data_filt/CHR6_Plates_77_to_121_PMRA_shapeit_SORTED_SORTED", "Data_filt/CHR6_Stanford_125B3_131_133_to_141Qced_SORTED"],
     "locus":["A","B","C","DPB1","DQA1","DQB1","DRB1","DRB3", "DRB4", "DRB5"],
-    "model":"",
-    "output":""
+    "output":"Output/",
+    "ethnicity":"Resources/data_ethnicity.csv",
+    "ethnicity_list": ["AFR","EUR", "SAS", "EAS", "AMR"]
+    
+    
 }

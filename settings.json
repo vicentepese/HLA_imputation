@@ -10,7 +10,7 @@
         "def":"Resources/PMRA-HLA4-hg19.RData"
     },
 
-    "plinkFile":["Data_filt/CHR6_concat_EAS_CLEAN_pass1_lifted_over_SORTED", "Data_filt/CHR6_GPC_LGI1", "Data_filt/CHR6_Oxford_LGI1",         "Data_filt/CHR6_Plates_77_to_121_PMRA_shapeit_SORTED_SORTED", "Data_filt/CHR6_Stanford_125B3_131_133_to_141Qced_SORTED"],
+    "plinkFile":["Data_filt/CHR6_concat_EAS_CLEAN_pass1_lifted_over_SORTED", "Data_filt/CHR6_GPC_LGI1", "Data_filt/CHR6_Oxford_LGI1", "Data_filt/CHR6_Plates_77_to_121_PMRA_shapeit_SORTED_SORTED", "Data_filt/CHR6_Stanford_125B3_131_133_to_141Qced_SORTED"],
     "locus":["A","B","C","DPB1","DQA1","DQB1","DRB1","DRB3", "DRB4", "DRB5"],
     "output":"Output/",
     "ethnicity":"Resources/data_ethnicity.csv",

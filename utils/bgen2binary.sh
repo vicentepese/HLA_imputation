@@ -1,5 +1,15 @@
 #!/bin/bash 
 
+###################################################################
+# Script Name	 : bgen2binary.sh                                                                                     
+# Description	 : Convert .bgen to PLINK binary and QC                                                                    
+# Args           : None                                                                                           
+# Author         : Vicente Peris Sempere                                                
+# Email          : vipese@stanford.edu
+# Copyright      : Vicente Peris Sempere, 2021
+# Year           : 2021                                          
+###################################################################
+
 # Datasets
 PREFIX=/labs/mignot/LIFTOVER_GERA_2018/CHR6_concat_EAS_CLEAN_pass1_lifted_over_SORTED
 OUTFIX=CHR6_concat_EAS_CLEAN_pass1_lifted_over_SORTED

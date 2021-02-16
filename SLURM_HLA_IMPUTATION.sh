@@ -1,5 +1,15 @@
 #!/bin/bash 
 
+###################################################################
+# Script Name	 : SLURM_HLA_IMPUTATION_ETH.sh                                                                                     
+# Description	 : Pre-submission of HLA imputation                                                                    
+# Args           : None                                                                                           
+# Author         : Vicente Peris Sempere                                                
+# Email          : vipese@stanford.edu
+# Copyright      : Vicente Peris Sempere, 2021
+# Year           : 2021                                          
+###################################################################
+
 # Read settings
 DBS=$(jq -r .plinkFile settings.json)
 

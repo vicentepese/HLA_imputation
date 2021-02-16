@@ -1,21 +1,29 @@
+## ---------------------------
+##
+## Script name: HLA_imputation.R
+##
+## Purpose of script: Merges outputs of HLA_imputation.R into a final file
+##
+## Author: Vicente Peris Sempere, MSc BME
+##
+## Year Created: 2021
+##
+## Copyright (c) Vicente Peris Sempere, 2021
+## Email: vipese@stanford.edu
+##
+## ---------------------------
+
 # Import libraries
 library(jsonlite)
 library(tidyverse)
 library(data.table)
-library(ggrepel)
-library(viridis)
-library(hrbrthemes)
 library(HIBAG)
 library(parallel)
-library(ggplot2)
-library(gridExtra)
 library(rlist)
-library(plotly)
-library(optparse)
-library(parallel)
-library(plyr)
 
 ########## IMPORT ##########
+
+# Set working directory
 setwd("~/HLA_imputation")
 
 # Import settings

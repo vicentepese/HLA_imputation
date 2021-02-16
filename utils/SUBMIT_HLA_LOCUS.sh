@@ -1,5 +1,17 @@
 #!/bin/bash 
 
+###################################################################
+# Script Name	   : SUBMIT_HLA_LOCUS.sh                                                                                    
+# Description	   : Submits jobs to Stanford SCG through SLURM                                                                    
+# Args           : 
+#   --database: Full path to database
+#   --ethnicity: Ethnicity to impute
+# Author         : Vicente Peris Sempere                                                
+# Email          : vipese@stanford.edu
+# Copyright      : Vicente Peris Sempere, 2021
+# Year           : 2021                                          
+###################################################################
+
 #SBATCH --job-name=IMPUTE_HLA
 #SBATCH --output=IMPUTE_HLA.out
 #SBATCH --error=IMPUTE_HLA.err
@@ -34,16 +46,16 @@ case $key in
     ;;
     -d|--database)
     FILE="$2"
-    shift # past argument
-    shift # past value
+    shift 
+    shift 
     ;;
     -e|--ethnicity)
     ETH="$2"
     shift
     shift
     ;;
-    *)    # unknown option
-    usage # save it in an array for later
+    *)    
+    usage 
 esac
 done
 

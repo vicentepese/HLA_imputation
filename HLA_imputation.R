@@ -2,17 +2,9 @@
 library(jsonlite)
 library(tidyverse)
 library(data.table)
-library(ggrepel)
-library(viridis)
-library(hrbrthemes)
 library(HIBAG)
 library(parallel)
-library(ggplot2)
-library(gridExtra)
 library(rlist)
-library(plotly)
-library(optparse)
-library(parallel)
 
 ########## IMPORT ##########
 setwd("~/HLA_imputation")
